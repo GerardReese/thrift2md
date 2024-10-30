@@ -184,7 +184,7 @@ function extractComments(entityComments: Comment[], useSpaceForLineTerminators: 
 
 // Creates shaded html description header that translates " - " in comments to bullet list items
 function createHtmlDescriptionHeader(input: string) {
-    let re = / - /g;
+    let re = / -  /g;
     let tryReg = re.test(input);
     let replacedInput = tryReg ? input.replace(re, "<li>").replace("<li>", "<ul><li>") : input;
     let closing = tryReg ? '</ul></div>' : '</div>';
