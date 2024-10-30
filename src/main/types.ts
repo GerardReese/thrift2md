@@ -20,7 +20,7 @@ export interface IHeaderOne { h1: string }
 export interface IHeaderTwo { h2: string }
 export interface IHeaderThree { h3: string }
 export interface IBlockQuote { blockquote: string }
-export interface ICodeBlock { code: { content: string } }
+export interface ICodeBlock { code: { language?: string, content: string } }
 export interface ITable {
     table: {
         headers: string[],
@@ -32,12 +32,12 @@ export interface ITable {
  * Thrift Types
  */
 export type LiteralValue = StringLiteral | BooleanLiteral | IntegerLiteral | HexLiteral |
-FloatLiteral | ExponentialLiteral
+    FloatLiteral | ExponentialLiteral
 
 export type DocSection = NamespaceDefinition | ServiceDefinition
 
 export type SectionType = SyntaxType.NamespaceDefinition | SyntaxType.ServiceDefinition |
-SyntaxType.StructDefinition | SyntaxType.TypedefDefinition | SyntaxType.EnumDefinition | SyntaxType.ConstDefinition
+    SyntaxType.StructDefinition | SyntaxType.TypedefDefinition | SyntaxType.EnumDefinition | SyntaxType.ConstDefinition
 
 /**
  * Transform Types
@@ -47,21 +47,22 @@ export type ThriftMarkdown = [
     ModuleSection,
     TypeDefSection,
     ConstantsSection,
-    EnumSection, 
+    EnumSection,
     StructSection,
     ServiceSection
 ]
 
 export type ModuleSection = [IHeaderOne, IBlockQuote[], string]
 
-export type TypedDefinitionTable = [IHeaderThree, ICodeBlock, IBlockQuote]
+export type TypedDefinitionTable = [IHeaderThree, string, IBlockQuote]
 export type TypeDefSection = [IHeaderTwo, TypedDefinitionTable[]]
 
 export type FunctionSection = [IHeaderFour, IBlockQuote]
 export type ServiceDefintionSection = [IHeaderThree, FunctionSection[]]
 export type ServiceSection = [IHeaderTwo, ServiceDefintionSection[]]
 
-export type StructDefinitionTable = [IHeaderThree, ICodeBlock, ITable]
+export type StructDefinitionTableOld = [IHeaderThree, ICodeBlock, ITable]
+export type StructDefinitionTable = [IHeaderThree, string, ITable]
 export type StructSection = [IHeaderTwo, StructDefinitionTable[]]
 export type StructFieldRow = [
     number | null,
@@ -72,7 +73,7 @@ export type StructFieldRow = [
     string
 ]
 
-export type EnumDefinitionTable = [IHeaderThree, ICodeBlock, ITable]
+export type EnumDefinitionTable = [IHeaderThree, string, ITable]
 export type EnumSection = [IHeaderTwo, EnumDefinitionTable[]]
 export type EnumMemberRow = [
     string,

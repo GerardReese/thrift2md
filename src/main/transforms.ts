@@ -172,7 +172,7 @@ const transformConst = (fld: ConstValue) => constTransform(
 function extractComments(entityComments: Comment[], useSpaceForLineTerminators: boolean) {
     var codeComments = "";
     entityComments.forEach(element => {
-        if(element.type == SyntaxType.CommentBlock) {
+        if (element.type == SyntaxType.CommentBlock) {
             element.value.forEach(elementChild => {
                 codeComments += elementChild.trimLeft();
             });
@@ -182,26 +182,36 @@ function extractComments(entityComments: Comment[], useSpaceForLineTerminators: 
     return useSpaceForLineTerminators ? codeComments.replace(/(\r\n|\n|\r)/gm, ' ') : codeComments;
 }
 
+// Creates shaded html description header that translates " - " in comments to bullet list items
+function createHtmlDescriptionHeader(input: string) {
+    let re = / - /g;
+    let tryReg = re.test(input);
+    let replacedInput = tryReg ? input.replace(re, "<li>").replace("<li>", "<ul><li>") : input;
+    let closing = tryReg ? '</ul></div>' : '</div>';
+    let styleContainer = '<div style="padding:10px; background-color:rgba(230, 230, 230, .4)">'; // uses rgba opacity of 40% for darkmode cases
+    return styleContainer + replacedInput + closing + '\n'; // line feed needed to designate end of region in markdown 
+}
+
 const isSection = (filter: SectionType, stmt: ThriftStatement) => stmt.type === filter
 const cIsSection = (filter: SectionType) => (stmt: ThriftStatement) => isSection(filter, stmt)
 
 /**
  * Type Definitions
  */
-const typedefDefinitionTable = (def: TypedefDefinition): TypedDefinitionTable => [{
-    h3: def.name.value,
-}, {
-    code: {
-        content: def.comments ? extractComments(def.comments, true) : ''
+const typedefDefinitionTable = (def: TypedefDefinition): TypedDefinitionTable => [
+    {
+        h3: def.name.value
+    },
+    createHtmlDescriptionHeader(extractComments(def.comments, true)),
+    {
+        blockquote: `${transformField(def.definitionType)} ${def.name.value}`,
     }
-}, {
-    blockquote: `${transformField(def.definitionType)} ${def.name.value}`,
-}]
+]
 
 export const transformTypeDefs = (ast: ThriftDocument): TypeDefSection => {
     const isTypeDef = cIsSection(SyntaxType.TypedefDefinition)
     return [
-        { h2: 'Types'},
+        { h2: 'Types' },
         ast.body.filter(isTypeDef).map((stmt) => typedefDefinitionTable(stmt as TypedefDefinition)),
     ]
 }
@@ -209,19 +219,19 @@ export const transformTypeDefs = (ast: ThriftDocument): TypeDefSection => {
 /**
  * Constants Transformations
  */
- const constMemberRow = (def: ConstDefinition): ConstantsMemberRow => [
+const constMemberRow = (def: ConstDefinition): ConstantsMemberRow => [
     def.name.value,
     transformField(def.fieldType),
     def.comments ? extractComments(def.comments, true) : '',
     constLiteralValues(def)
 ]
-function constLiteralValues(def: ConstDefinition){
+function constLiteralValues(def: ConstDefinition) {
     if (def.initializer.type == SyntaxType.ConstList || def.initializer.type == SyntaxType.ConstMap) {
         return transformConst(def.initializer).toString();
     }
     else {
         return getLiteralVal(def.initializer as LiteralValue)
-    } 
+    }
 }
 const constDefinitionTable = (constRows: ConstantsMemberRow[]): ITable => {
     return {
@@ -247,13 +257,12 @@ const enumMemberRow = (mbr: EnumMember): EnumMemberRow => [
     mbr.name.value,
     mbr.comments ? extractComments(mbr.comments, true) : ''
 ]
-const enumDefinitionTable = (def: EnumDefinition): EnumDefinitionTable => [{
-        h3: def.name.value,
-    }, {
-        code: {
-            content: def.comments ? extractComments(def.comments, true) : ''
-        }
-    }, {
+const enumDefinitionTable = (def: EnumDefinition): EnumDefinitionTable => [
+    {
+        h3: def.name.value
+    },
+    createHtmlDescriptionHeader(extractComments(def.comments, true)),
+    {
         table: {
             headers: ['Named Constant', 'Description'],
             rows: def.members.map(enumMemberRow),
@@ -279,14 +288,12 @@ const structFieldRow = (fld: FieldDefinition): StructFieldRow => [
     fld.requiredness || '',
     fld.defaultValue ? (fld.defaultValue.type == SyntaxType.StringLiteral ? fld.defaultValue.value : transformConst(fld.defaultValue)) : '',
 ]
-
-const structDefinitionTable = (def: StructDefinition): StructDefinitionTable => [{
-        h3: def.name.value,
-    }, {
-        code: {
-                content: def.comments ? extractComments(def.comments, true) : ''
-        }
-    }, {
+const structDefinitionTable = (def: StructDefinition): StructDefinitionTable => [
+    {
+        h3: def.name.value
+    },
+    createHtmlDescriptionHeader(extractComments(def.comments, true)),
+    {
         table: {
             headers: ['Key', 'Field', 'Type', 'Description', 'Required', 'Default value'],
             rows: def.fields.map(structFieldRow),
@@ -322,15 +329,15 @@ const transformFunction = (func: FunctionDefinition): FunctionSection => [{
     blockquote: `${funcSignature(func)}(${commaList(func.fields)}) ${funcThrows(func)}`,
 }]
 
-const serviceDefinitionSection = (def: ServiceDefinition): ServiceDefintionSection  => [
-        { h3: def.name.value },
-        def.functions.map(transformFunction),
-    ]
+const serviceDefinitionSection = (def: ServiceDefinition): ServiceDefintionSection => [
+    { h3: def.name.value },
+    def.functions.map(transformFunction),
+]
 
 export const transformServices = (ast: ThriftDocument): ServiceSection => {
     const isService = cIsSection(SyntaxType.ServiceDefinition)
     return [
-        { h2: 'Services'},
+        { h2: 'Services' },
         ast.body.filter(isService).map((stmt) => serviceDefinitionSection(stmt as ServiceDefinition)),
     ]
 }
