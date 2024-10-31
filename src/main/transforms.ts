@@ -169,6 +169,9 @@ const transformConst = (fld: ConstValue) => constTransform(
     (z) => `[${z.value}](#${z.value})`,
 )
 
+// Regex of New/old line terminators for win, mac, linux
+const lineTerminatorsRegEx = /(\r\n|\n|\x0b|\f|\r|\x85|\x2028|\x2029)/gm;
+
 function extractComments(entityComments: Comment[], useSpaceForLineTerminators: boolean) {
     var codeComments = "";
     entityComments.forEach(element => {
@@ -179,14 +182,15 @@ function extractComments(entityComments: Comment[], useSpaceForLineTerminators: 
         }
         // ignore any IDL '#' comments: SyntaxType.CommentLine
     });
-    return useSpaceForLineTerminators ? codeComments.replace(/(\r\n|\n|\r)/gm, ' ') : codeComments;
+    return useSpaceForLineTerminators ? codeComments.replace(lineTerminatorsRegEx, ' ') : codeComments;
 }
 
 // Creates styled header for comments and persists markdown.  Markdown list indicators 
 // need to be at start of line (whitespace n/a).
 function createHtmlCommentHeader(entityComments: Comment[]) {
-    let normalizedStr = extractComments(entityComments, false).replace(/(\r\n|\r)/gm, '\n');
-    let mdPersistedStr = normalizedStr.replace(/\n(?!- |1\. )/gm, '');
+    let mdListMatchRegEx = /\n(?!- |1\. )/gm;
+    let normalizedStr = extractComments(entityComments, false).replace(lineTerminatorsRegEx, '\n');
+    let mdPersistedStr = normalizedStr.replace(mdListMatchRegEx, '');
     let styleContainer = '<div style="padding:5px; background-color:ButtonFace; color:ButtonText">';
     let closing = '</div>';
     // line feeds needed designate start end of html vs markdown
