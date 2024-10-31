@@ -187,7 +187,7 @@ function extractComments(entityComments: Comment[], useSpaceForLineTerminators: 
 function createHtmlCommentHeader(entityComments: Comment[]) {
     let normalizedStr = extractComments(entityComments, false).replace(/(\r\n|\r)/gm, '\n');
     let mdPersistedStr = normalizedStr.replace(/\n(?!- |1\. )/gm, '');
-    let styleContainer = '<div style="padding:5px; background-color:rgba(230, 230, 230, .4)">';
+    let styleContainer = '<div style="padding:5px; background-color:ButtonFace; color:ButtonText">';
     let closing = '</div>';
     // line feeds needed designate start end of html vs markdown
     return styleContainer + '\n\n' + mdPersistedStr + '\n' + closing + '\n';
