@@ -1,5 +1,5 @@
 {
-  "name": "@creditkarma/thrift2md",
+  "name": "@gerardreese/thrift2md",
   "version": "0.0.1",
   "description": "Thrift to Markdown converter",
   "main": "dist/index.js",
@@ -10,6 +10,7 @@
     "lint": "tslint src/**/*",
     "test": "tsc && lab --coverage --coverage-path ./dist/main --sourcemaps ./dist/test/**/*.spec.js",
     "test:watch": "watch 'npm test' ./src",
+    "conversion": "node dist/bin/thrift2md.js ./fixtures/thrift/tutorial.thrift ./fixtures/md",
     "coverage": "lab --coverage --sourcemaps -r console -o stdout -r html -o ./coverage/coverage.html ./dist/test/**/*.spec.js",
     "release:patch": "npm version patch && npm run release:publish",
     "release:minor": "npm version minor && npm run release:publish",
@@ -21,7 +22,14 @@
     "markdown"
   ],
   "author": "Nick Nance",
+  "contributors": [
+    "Microsoft Corporation"
+  ],
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gerardreese/thrift2md"
+  },
   "devDependencies": {
     "@types/code": "^4.0.4",
     "@types/json2md": "^1.5.0",
@@ -36,7 +44,7 @@
     "watch": "^1.0.2"
   },
   "dependencies": {
-    "@creditkarma/thrift-parser": "^1.0.6",
+    "@creditkarma/thrift-parser": "^1.2.0",
     "json2md": "^1.6.1",
     "rimraf": "^2.6.2"
   }
