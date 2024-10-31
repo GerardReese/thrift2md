@@ -182,14 +182,15 @@ function extractComments(entityComments: Comment[], useSpaceForLineTerminators: 
     return useSpaceForLineTerminators ? codeComments.replace(/(\r\n|\n|\r)/gm, ' ') : codeComments;
 }
 
-// Creates shaded html description header that translates " - " in comments to bullet list items
-function createHtmlDescriptionHeader(input: string) {
-    let re = / -  /g;
-    let tryReg = re.test(input);
-    let replacedInput = tryReg ? input.replace(re, "<li>").replace("<li>", "<ul><li>") : input;
-    let closing = tryReg ? '</ul></div>' : '</div>';
-    let styleContainer = '<div style="padding:10px; background-color:rgba(230, 230, 230, .4)">'; // uses rgba opacity of 40% for darkmode cases
-    return styleContainer + replacedInput + closing + '\n'; // line feed needed to designate end of region in markdown 
+// Creates styled header for comments and persists markdown.  Markdown list indicators 
+// need to be at start of line (whitespace n/a).
+function createHtmlCommentHeader(entityComments: Comment[]) {
+    let normalizedStr = extractComments(entityComments, false).replace(/(\r\n|\r)/gm, '\n');
+    let mdPersistedStr = normalizedStr.replace(/\n(?!- |1\. )/gm, '');
+    let styleContainer = '<div style="padding:5px; background-color:rgba(230, 230, 230, .4)">';
+    let closing = '</div>';
+    // line feeds needed designate start end of html vs markdown
+    return styleContainer + '\n\n' + mdPersistedStr + '\n' + closing + '\n';
 }
 
 const isSection = (filter: SectionType, stmt: ThriftStatement) => stmt.type === filter
@@ -202,7 +203,7 @@ const typedefDefinitionTable = (def: TypedefDefinition): TypedDefinitionTable =>
     {
         h3: def.name.value
     },
-    createHtmlDescriptionHeader(extractComments(def.comments, true)),
+    createHtmlCommentHeader(def.comments),
     {
         blockquote: `${transformField(def.definitionType)} ${def.name.value}`,
     }
@@ -261,7 +262,7 @@ const enumDefinitionTable = (def: EnumDefinition): EnumDefinitionTable => [
     {
         h3: def.name.value
     },
-    createHtmlDescriptionHeader(extractComments(def.comments, true)),
+    createHtmlCommentHeader(def.comments),
     {
         table: {
             headers: ['Named Constant', 'Description'],
@@ -292,7 +293,7 @@ const structDefinitionTable = (def: StructDefinition): StructDefinitionTable => 
     {
         h3: def.name.value
     },
-    createHtmlDescriptionHeader(extractComments(def.comments, true)),
+    createHtmlCommentHeader(def.comments),
     {
         table: {
             headers: ['Key', 'Field', 'Type', 'Description', 'Required', 'Default value'],
