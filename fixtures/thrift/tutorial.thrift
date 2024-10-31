@@ -62,14 +62,14 @@ include "shared.thrift"
  * Thrift files can namespace, package, or prefix their output in various
  * target languages.
  */
-namespace cpp tutorial
-namespace d tutorial
-namespace dart tutorial
-namespace java tutorial
-namespace php tutorial
-namespace perl tutorial
-namespace haxe tutorial
-namespace netcore tutorial
+namespace cpp tutorial.namespace.for.cpp
+namespace d tutorial.namespace.for.d
+namespace dart tutorial.namespace.for.dart
+namespace java tutorial.namespace..for.java
+namespace php tutorial.namespace.for.php
+namespace perl tutorial.namespace.for.perl
+namespace haxe tutorial.namespace.for.haxe
+namespace netcore tutorial.namespace.for.netcore
 
 /**
  * Thrift lets you do typedefs to get pretty names for your types. Standard
@@ -84,6 +84,12 @@ typedef i32 MyInteger
 const i32 INT32CONSTANT = 9853
 const map<string,string> MAPCONSTANT = {'hello':'world', 'goodnight':'moon'}
 
+/** 
+    Test a set of trees
+    And check all is fine
+*/
+const string UNIFIED_TREE_NAMES = "TestingTrees"
+
 /**
  * You can define enums, which are just 32 bit integers. Values are optional
  * and start at 1 if not supplied, C style again.
@@ -96,19 +102,32 @@ enum Operation {
 }
 
 /**
+    Another case of header comments.
+    This time on an enum.
+  */
+enum FruitType {
+    /** a category */
+    Apple,
+
+    /** include comma, not needed */
+    Orange,
+}
+
+/**
  * Structs are the basic complex data structures. They are comprised of fields
  * which each have an integer identifier, a type, a symbolic name, and an
  * optional default value.
  *
  * Fields can be declared "optional", which ensures they will not be included
  * in the serialized output if they aren't set.  Note that this requires some
- * manual management in some languages.
+ * manual management in some languages. can use "required" instead of blank 
  */
 struct Work {
   1: i32 num1 = 0,
-  2: i32 num2,
-  3: Operation op,
+  2: required i32 num2,
+  3: required Operation op,
   4: optional string comment,
+  5: required string fruitName = "Grape"
 }
 
 /**
