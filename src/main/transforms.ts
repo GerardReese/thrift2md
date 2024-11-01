@@ -176,8 +176,8 @@ function extractComments(entityComments: Comment[], useSpaceForLineTerminators: 
     var codeComments = "";
     entityComments.forEach(element => {
         if (element.type == SyntaxType.CommentBlock) {
-            element.value.forEach(elementChild => {
-                codeComments += elementChild.trimLeft();
+            element.value.filter(x => x.trim() != '').forEach(elementChild => {
+                codeComments += elementChild;
             });
         }
         // ignore any IDL '#' comments: SyntaxType.CommentLine
@@ -188,7 +188,7 @@ function extractComments(entityComments: Comment[], useSpaceForLineTerminators: 
 // Creates styled header for comments and persists markdown.  Markdown list indicators 
 // need to be at start of line (whitespace n/a).
 function createHtmlCommentHeader(entityComments: Comment[]) {
-    let mdListMatchRegEx = /\n(?!- |1\. )/gm;
+    let mdListMatchRegEx = /\n(?! - | 1\. )/gm;
     let normalizedStr = extractComments(entityComments, false).replace(lineTerminatorsRegEx, '\n');
     let mdPersistedStr = normalizedStr.replace(mdListMatchRegEx, ' ');
     let styleContainer = '<div style="padding:5px; background-color:ButtonFace; color:ButtonText">';
