@@ -33,15 +33,24 @@
   "devDependencies": {
     "@types/code": "^4.0.4",
     "@types/json2md": "^1.5.0",
-    "@types/lab": "^11.1.0",
-    "@types/node": "^8.10.10",
+    "@types/lab":"^11.1.4",
+    "@types/node": "^18.16.19",
+    "@types/node-int64":"^0.4.32",
     "@types/rimraf": "^2.0.2",
     "@types/thrift": "^0.10.7",
     "code": "^5.2.0",
-    "lab": "^15.4.1",
+    "diff": "^8.0.3",
+    "eslint": "10.0.2",
+    "handlebars": "^4.7.7",
+    "js-yaml": "^3.2.7",
+    "lab":"^18.0.2",
+    "minimatch": "^3.1.5",
     "tslint": "^5.9.1",
     "typescript": "^5.6.3",
-    "watch": "^1.0.2"
+    "uglify-js": "^2.8.9",
+    "watch": "^0.13.0",
+    "tmp":"^0.2.5",
+    "brace-expansion":"^5.0.4"
   },
   "dependencies": {
     "@creditkarma/thrift-parser": "^1.2.0",

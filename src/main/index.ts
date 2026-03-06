@@ -26,8 +26,19 @@ export const loadFile = (fileName: string): Promise<string> =>
 
 export const writeFile = (fileName: string) => (md: string): Promise<boolean> =>
     new Promise((resolve, reject) => {
-        fs.writeFile(fileName, md, { encoding: 'utf-8' }, (err) => {
-            err ? reject(err) : resolve(true)
+        // make sure the directory exists before writing the file
+        const dir = fileName.substring(0, fileName.lastIndexOf('/'))
+        fs.mkdir(dir, { recursive: true }, (err) => {
+            if (err) {
+                return reject(err)
+            }
+            // write the file
+            fs.writeFile(fileName, md, { encoding: 'utf-8' }, (err2) => {
+                if (err2) {
+                    return reject(err2)
+                }
+                resolve(true)
+            })
         })
     })
 
