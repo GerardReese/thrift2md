@@ -13,8 +13,6 @@ export const lab = Lab.script()
 const describe = lab.describe
 const it = lab.it
 const before = lab.before
-const beforeEach = lab.beforeEach
-const afterEach = lab.afterEach
 
 describe('Transform Thrift Struct', () => {
     let struct: any[]
