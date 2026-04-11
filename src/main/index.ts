@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import * as json2md from 'json2md'
+import json2md = require('json2md')
 
 import {
     parse,
@@ -15,7 +15,10 @@ import {
     transformStructs,
     transformTypeDefs,
 } from './transforms'
+
 import { ThriftMarkdown } from './types';
+
+//const json2md = require('json2md');
 
 export const loadFile = (fileName: string): Promise<string> =>
     new Promise((resolve, reject) => {
